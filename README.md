@@ -1,9 +1,9 @@
 # menu-telegram-bot
 Contents:
 
-RU - line 5
+RU - line 8
 
-ENG - line 
+ENG - line 93
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 Общие данные:
@@ -89,3 +89,84 @@ ENG - line
 !!!
 Кастомные скрипты:
 При запуске документа происходит запрос на обновление/создание дампа базы данных (вшита защита от дураков), после чего пересортировываются в алфавитном порядке блюда и заготовки, обновляются списки ингредиентов и списки блюд для бота (смотри базы данных блюд).
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+General Information:
+
+This bot is designed to search for dishes in a database that can be prepared based on a given set of ingredients, create stop lists (red lists), waiting lists (yellow lists), and available for cooking lists (green lists), as well as search for recipes for preparing dishes. The bot supports multi-user mode. This bot comes with a database of dishes, a database for working in multi-user mode, a script for converting the database into a .tex document, custom scripts for working with the database.
+
+!!!
+Working with the Bot:
+After launching the bot, the user is presented with three commands:
+
+Calculate Lists
+
+Request Help
+
+Perform a Database Search
+
+When calculating lists, if the bot has previously saved user-entered data, it will suggest using them and skip the procedure of entering new data. If this option is chosen, the bot will immediately suggest moving on to creating green, yellow, and red lists. Otherwise, the bot will suggest sending a message with the rules of filling out (0 - no ingredient; 1 - ingredient is present) and suggest sending a template containing all the ingredients from all the dishes. The user can respond to the bot's proposal with agreement or refusal, or simply ignore it. This will NOT break the bot.
+
+IMPORTANT: When filling out the template, it is important to follow the syntax "Cucumber - 1". The bot includes some protection against typos, and if you enter "Cucumber -1", "CUCUMBER - 1" or "CUCUMBER -1", nothing serious will happen, but the author strongly advises against doing so. The bot also includes some input data validation: if you enter a random set of characters or just "Cucumber," you will receive a message that the data is incorrect, and if you enter "Cucumber -," the bot will inform you that it expects values of 0 or 1 and specify the specific ingredients where you need to enter them. After receiving an error message, you do not need to exit the menu and start entering ingredients from scratch. Simply resend the corrected message.
+
+After that, you will have the option to calculate the following lists:
+
+Red List (stop list) contains all the dishes that lack at least one ingredient, preventing the preparation of the dish.
+Green List (available for cooking list) contains all the dishes for which the ingredients are definitely available.
+Yellow List (waiting list) contains all other dishes for which there is insufficient information to classify them as red or green.
+The bot will also offer you the option to return to the main menu and calculate the lists again. When choosing to recalculate the lists, everything described earlier will be repeated, but without the possibility to use previously entered data. In addition, during the data input process, the bot will suggest going back if you accidentally initiated this function.
+
+The "Help" command will provide a brief instruction on how to use the bot and then offer you to return to the beginning.
+
+The "Search" command offers two search options:
+
+1)By ingredient.
+
+2)By dish name.
+
+The first option is executed by sending a message with the following syntax: "*ingredient_1" or "*ingredient_1, ingredient_2." In the first case, all dishes containing ingredient_1 will be displayed, and in the second case, all dishes containing either ingredient_1 OR ingredient_2 will be displayed. The number of ingredients in this sequence is not limited. In case of entering an incorrect ingredient, the bot will notify you.
+
+The second option assumes that you will enter the full or partial name of a dish. Suppose we have dishes "pancake 1" and "pancake 12". If we enter "pancake 1," the bot will send us a message with a numbered list of "namesakes" and ask us to enter ONLY the number of the specific dish. If you enter a letter instead of a number, the bot will say it requested a digit, and if you enter an incorrect number, it will tell you that there is no such number. In the process, the bot will offer to return to the main menu and wait for you to enter the correct number. After entering the correct number, the bot will send us the technical card for the desired pancake. If you enter non-existent dishes, the bot will notify you that there is no such dish in the database.
+
+At the beginning of the search, the bot optionally offers to show the list of blanks.
+
+!!!
+Dish Database:
+This database contains three main tables: dishes, bot dishes, and a list of ingredients.
+
+In the "Dishes" table, there are the following fields:
+1) Dish Name
+2) Ingredients
+3) Comments
+4) Preparation
+
+The "Dish Name" field contains a string. Since the bot's search algorithm and the algorithm for creating a technical card for chefs imply orientation to the "class" of the dish, it is necessary to include this information before the dish name. For example: "soup 'solyanka'," "oatmeal porridge," "pancake with salmon," and so on. The corresponding classes are specified in the bot's code in the function "get_search_request_func(x)," so if the number of classes in the database changes, they will need to be updated there.
+
+The "Ingredients" field contains a string. Information is recorded as follows: "ingredient, quantity, ingredient, quantity." It is important to maintain the separator ", " or it will break the bot. The quantity is entered in grams (only digits) or sometimes in pieces (context-dependent).
+
+The "Comments" field contains a string with explanations for preparation.
+
+The "Preparation" field contains a value of 0 or 1. 1 - this dish is a preparation, 0 - the opposite of 1.
+
+In the "Bot Dishes" table, there are the following fields:
+1) Dish Name
+2) Ingredients
+
+The rules for this table are absolutely the same as for the previous one. This table was created to facilitate the writing and testing of the bot, but it can be removed if necessary (after modifying the corresponding element in the code) and replaced with the "Dishes" table. The main difference is that there are no gram measurements in the "Ingredients" column because this table was used for creating red, yellow, and green lists, not for searching for recipes and creating technical cards. If you encounter any issues with this table, run custom scripts for the database, and everything will be fixed.
+
+In the "List of Ingredients" table, there is the following field:
+1) Ingredient.
+
+This field contains the name of a single ingredient (preparations can also be ingredients).
+
+!!!
+User Database:
+The user database includes the following fields: "user_id" INTEGER, "state" INTEGER, "switch" INTEGER, "yellow_list" TEXT, "green_list" TEXT, "stop_list" TEXT, "list_of_dishes" TEXT, "parameters" TEXT, "list_of_variants" TEXT, "list_of_outputs" TEXT, "iteration" INTEGER. All fields except "user_id" are global variables because this field represents the user's ID in Telegram.
+
+---
+Script for Conversion to a .tex Document:
+Based on the dish database, the script creates a document with a .tex extension, allowing for easy conversion of the database into convenient technical cards for chefs using LaTeX. All the necessary libraries for successful compilation are preselected and included in the final file, so all you need to do is open the generated document in LaTeX and start the compilation process. The document is sorted by dish categories (see the dish database) and alphabetically line by line.
+
+---
+Custom Scripts:
+Upon opening the document, there is a request to update/create a database dump (with protection against mistakes), after which the dishes and preparations are resorted alphabetically, ingredient lists and lists of dishes for the bot are updated (see the dish database).
