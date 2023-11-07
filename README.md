@@ -111,7 +111,7 @@ IMPORTANT: When filling out the template, it is important to follow the syntax "
 
 After that, you will have the option to calculate the following lists:
 
-Red List (stop list) contains all the dishes that lack at least one ingredient, preventing the preparation of the dish.
+Red List (stop list) contains all the dishes that lack at least one ingredient, preventing the workpiece of the dish.
 Green List (available for cooking list) contains all the dishes for which the ingredients are definitely available.
 Yellow List (waiting list) contains all other dishes for which there is insufficient information to classify them as red or green.
 The bot will also offer you the option to return to the main menu and calculate the lists again. When choosing to recalculate the lists, everything described earlier will be repeated, but without the possibility to use previously entered data. In addition, during the data input process, the bot will suggest going back if you accidentally initiated this function.
@@ -138,15 +138,15 @@ In the "Dishes" table, there are the following fields:
 1) Dish Name
 2) Ingredients
 3) Comments
-4) Preparation
+4) Workpiece
 
 The "Dish Name" field contains a string. Since the bot's search algorithm and the algorithm for creating a technical card for chefs imply orientation to the "class" of the dish, it is necessary to include this information before the dish name. For example: "soup 'solyanka'," "oatmeal porridge," "pancake with salmon," and so on. The corresponding classes are specified in the bot's code in the function "get_search_request_func(x)," so if the number of classes in the database changes, they will need to be updated there.
 
 The "Ingredients" field contains a string. Information is recorded as follows: "ingredient, quantity, ingredient, quantity." It is important to maintain the separator ", " or it will break the bot. The quantity is entered in grams (only digits) or sometimes in pieces (context-dependent).
 
-The "Comments" field contains a string with explanations for preparation.
+The "Comments" field contains a string with explanations for workpiece.
 
-The "Preparation" field contains a value of 0 or 1. 1 - this dish is a preparation, 0 - the opposite of 1.
+The "Workpiece" field contains a value of 0 or 1. 1 - this dish is a workpiece, 0 - the opposite of 1.
 
 In the "Bot Dishes" table, there are the following fields:
 1) Dish Name
@@ -157,7 +157,7 @@ The rules for this table are absolutely the same as for the previous one. This t
 In the "List of Ingredients" table, there is the following field:
 1) Ingredient.
 
-This field contains the name of a single ingredient (preparations can also be ingredients).
+This field contains the name of a single ingredient (workpieces can also be ingredients).
 
 !!!
 User Database:
@@ -169,4 +169,4 @@ Based on the dish database, the script creates a document with a .tex extension,
 
 ---
 Custom Scripts:
-Upon opening the document, there is a request to update/create a database dump (with protection against mistakes), after which the dishes and preparations are resorted alphabetically, ingredient lists and lists of dishes for the bot are updated (see the dish database).
+Upon opening the document, there is a request to update/create a database dump (with protection against mistakes), after which the dishes and workpieces are resorted alphabetically, ingredient lists and lists of dishes for the bot are updated (see the dish database).
